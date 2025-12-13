@@ -15,35 +15,61 @@ from parser.events import PortStateEvent
 def print_header(title: str) -> None:
     """Print a formatted section header."""
     print("\n" + "=" * 60)
-    print(f"{title}")
+    print(title)
     print("=" * 60)
 
 
 def main() -> None:
-    target = "scanme.nmap.org"
-    profile = "fast"
+    # --------------------------------------------------
+    # Central configuration (easy to extend later)
+    # --------------------------------------------------
+    config = {
+        "target": "scanme.nmap.org",
+        "profile": "fast",
+        "dry_run": False,   # Set True to see command without executing
+    }
 
-    # --- Run scan ---
+    # --------------------------------------------------
+    # Run scan
+    # --------------------------------------------------
     print_header("Attack Surface Scan Started")
-    runner = NmapRunner()
-    scan_result = runner.run_scan(target, profile)
 
-    # --- Parse XML ---
+    runner = NmapRunner()
+    scan_result = runner.run_scan(
+        target=config["target"],
+        profile=config["profile"],
+        dry_run=config["dry_run"],
+    )
+
+    # Handle dry-run mode
+    if scan_result.get("dry_run"):
+        print("[*] Dry run enabled")
+        print(f"Command: {scan_result['command']}")
+        return
+
+    # --------------------------------------------------
+    # Parse XML output
+    # --------------------------------------------------
     parser = NmapXMLParser()
     events = parser.parse(scan_result["output_file"])
 
-    # --- Store results ---
+    # --------------------------------------------------
+    # Store results
+    # --------------------------------------------------
     storage = StorageEngine()
-    scan_id = storage.create_scan(target, profile)
+    scan_id = storage.create_scan(config["target"], config["profile"])
     storage.store_events(scan_id, events)
 
     print(f"[+] Scan ID       : {scan_id}")
-    print(f"[+] Target        : {target}")
-    print(f"[+] Profile       : {profile}")
+    print(f"[+] Target        : {config['target']}")
+    print(f"[+] Profile       : {config['profile']}")
     print(f"[+] Events Parsed : {len(events)}")
 
-    # --- Change detection ---
+    # --------------------------------------------------
+    # Change detection
+    # --------------------------------------------------
     changes = {"opened_ports": [], "closed_ports": []}
+
     if scan_id > 1:
         detector = ChangeDetector()
         diff = detector.detect_changes(scan_id - 1, scan_id)
@@ -53,6 +79,7 @@ def main() -> None:
         }
 
     print_header("Attack Surface Changes")
+
     if not changes["opened_ports"] and not changes["closed_ports"]:
         print("No changes detected since last scan.")
     else:
@@ -66,12 +93,15 @@ def main() -> None:
             for host, port in changes["closed_ports"]:
                 print(f"  [-] {host}:{port}")
 
-    # --- Risk scoring ---
+    # --------------------------------------------------
+    # Risk scoring
+    # --------------------------------------------------
     scorer = RiskScorer()
     port_events = [e for e in events if isinstance(e, PortStateEvent)]
     risks = scorer.score_events(port_events)
 
     print_header("Risk Assessment")
+
     if not risks:
         print("No risky services detected.")
     else:
@@ -87,11 +117,13 @@ def main() -> None:
             )
         )
 
-    # --- Build JSON report ---
+    # --------------------------------------------------
+    # Build JSON report
+    # --------------------------------------------------
     report = {
         "scan_id": scan_id,
-        "target": target,
-        "profile": profile,
+        "target": config["target"],
+        "profile": config["profile"],
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "summary": {
             "total_events": len(events),
@@ -102,7 +134,9 @@ def main() -> None:
         "risk_assessment": risks,
     }
 
-    # --- Save report ---
+    # --------------------------------------------------
+    # Save report
+    # --------------------------------------------------
     reports_dir = Path("reports")
     reports_dir.mkdir(exist_ok=True)
 
