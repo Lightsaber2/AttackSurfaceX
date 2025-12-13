@@ -1,0 +1,7 @@
+venv/
+scans/
+reports/
+__pycache__/
+*.db
+.DS_Store
+Thumbs.db
