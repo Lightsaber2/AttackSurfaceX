@@ -1,6 +1,7 @@
 venv/
 scans/
 reports/
+logs/
 __pycache__/
 *.db
 .DS_Store

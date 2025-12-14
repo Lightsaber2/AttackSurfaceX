@@ -1,0 +1,34 @@
+# AttackSurfaceX Configuration File
+
+# Default scan settings
+scan:
+  default_target: "scanme.nmap.org"
+  default_profile: "fast"
+  timeout: 300  # seconds
+  
+# Directory paths
+paths:
+  scans_dir: "scans"
+  reports_dir: "reports"
+  database: "attack_surface.db"
+  logs_dir: "logs"
+
+# Logging configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  console_output: true
+  file_output: true
+  max_log_size_mb: 10
+  backup_count: 5
+
+# Risk scoring thresholds
+risk:
+  high_threshold: 8
+  medium_threshold: 5
+  low_threshold: 3
+
+# Report generation
+reports:
+  generate_json: true
+  generate_pdf: false  # Will be implemented later
+  include_raw_xml: false
