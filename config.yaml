@@ -4,7 +4,7 @@
 scan:
   default_target: "scanme.nmap.org"
   default_profile: "fast"
-  timeout: 300  # seconds
+  timeout: 1800  # seconds
   
 # Directory paths
 paths:
