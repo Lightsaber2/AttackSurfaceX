@@ -1,9 +1,9 @@
-# AttackSurfaceX 🛰️
+# AttackSurfaceX
 An Attack Surface Monitoring & Risk Intelligence Tool
 
 ---
 
-## 📌 Overview
+## Overview
 AttackSurfaceX is a **local attack surface monitoring tool** built with Python and Nmap.  
 It continuously discovers exposed network services, tracks changes across scans, assigns risk scores, and generates structured security reports.
 
@@ -11,27 +11,29 @@ Unlike one-off scanners, AttackSurfaceX focuses on **visibility over time**, ena
 - newly exposed services
 - closed or filtered ports
 - high-risk legacy protocols
+- attack surface evolution
 
-⚠️ **Disclaimer**  
+**Disclaimer**  
 This tool is intended for **educational use and authorized security assessments only**.  
 Always ensure you have **explicit permission** before scanning any target.  
 The author is **not responsible** for misuse or illegal activity.
 
 ---
 
-## ✨ Key Features
-- 🔍 Controlled Nmap Scan Execution
-- 📄 XML Parsing & Event Normalization
-- 🧠 Attack Surface Change Detection
-- ⚠️ Rule-Based Risk Scoring
-- 🗂️ Persistent Scan History (SQLite)
-- 📊 Human-Readable CLI Output
-- 📁 Structured JSON Report Generation
-- 🕒 Timestamped & Audit-Friendly Results
+## Key Features
+- Controlled Nmap Scan Execution
+- XML Parsing & Event Normalization
+- Attack Surface Change Detection
+- Rule-Based Risk Scoring
+- Persistent Scan History (SQLite)
+- Human-Readable CLI Output
+- Structured JSON Report Generation
+- Timestamped & Audit-Friendly Results
+- Graceful Error Handling
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 AttackSurfaceX/
@@ -55,12 +57,17 @@ AttackSurfaceX/
 │   ├── profiles.py          # Scan profiles
 │   └── runner.py            # Nmap execution engine
 │
-├── reports/
-│   └── report_scan_*.json   # Generated scan reports
+├── utils/
+│   ├── __init__.py
+│   ├── config.py            # Configuration management
+│   └── logger.py            # Centralized logging system
 │
+├── reports/                 # Generated scan reports
 ├── scans/                   # Raw Nmap XML output
-├── attack_surface.db        # Local SQLite database
+├── logs/                    # Application logs
 │
+├── attack_surface.db        # Local SQLite database
+├── config.yaml              # Configuration file
 ├── main.py                  # Orchestrator / entry point
 ├── requirements.txt
 ├── .gitignore
@@ -69,7 +76,7 @@ AttackSurfaceX/
 
 ---
 
-## ⚙️ Installation
+## Installation
 
 ### System Dependency
 AttackSurfaceX requires **Nmap** to be installed and available in PATH.
@@ -92,42 +99,79 @@ pip install -r requirements.txt
 
 ---
 
-## 🚀 Usage
+## Usage
 
-Run a scan and generate a report:
+Basic Commands
+Scan default target:
 ```bash
 python main.py
 ```
-
-Each run will:
-- execute an Nmap scan
-- store results in SQLite
-- detect attack surface changes
-- calculate risk scores
-- generate a JSON report in `reports/`
+Scan specific target:
+```bash
+python main.py -t 192.168.1.1
+```
+Use different scan profile:
+```bash
+python main.py -t scanme.nmap.org -p full
+```
+Preview scan command (dry run):
+```bash
+python main.py -t 10.0.0.0/24 -p stealth --dry-run
+```
+Available scan profiles:
+- fast
+- full
+- comprehensive
+- stealth
 
 ---
 
-## 📊 Example Output
+## Example Output
 
 ```
-[+] Scan stored successfully
-[+] Risk Assessment:
-45.33.32.156:21 (ftp) -> Risk 9/10
-45.33.32.156:22 (ssh) -> Risk 5/10
+============================================================
+Attack Surface Scan Started
+============================================================
+[+] Scan completed in 12.34s
+[+] Scan ID       : 5
+[+] Target        : scanme.nmap.org
+[+] Profile       : fast
+[+] Events Parsed : 12
+
+============================================================
+Attack Surface Changes
+============================================================
+Newly Opened Ports:
+  [+] 45.33.32.156:8080
+
+============================================================
+Risk Assessment
+============================================================
++----------------+-------+-----------+--------+
+| Host           | Port  | Service   | Risk   |
++================+=======+===========+========+
+| 45.33.32.156   | 21    | ftp       | 9/10   |
++----------------+-------+-----------+--------+
+| 45.33.32.156   | 22    | ssh       | 5/10   |
++----------------+-------+-----------+--------+
+
+============================================================
+Report Generated
+============================================================
+Saved to: reports/report_scan_5.json
 ```
 
 ---
 
-## 🛡️ Legal Disclaimer
+## Legal Disclaimer
 AttackSurfaceX is intended for **educational use and authorized security testing only**.  
 Unauthorized scanning of systems without permission is strictly prohibited.
 
 ---
 
-## 📜 License
+## License
 This project is licensed under the **MIT License**.
 
 ---
 
-👨‍💻 Developed by **Lightsaber2**
+Developed by **Lightsaber2**
