@@ -2,6 +2,7 @@
 profiles.py
 
 Defines reusable Nmap scan profiles with metadata.
+Optimized for practical monitoring use cases.
 """
 
 from typing import Dict, List
@@ -15,11 +16,21 @@ SCAN_PROFILES: Dict[str, Dict[str, List[str]]] = {
         ],
     },
     "full": {
-        "description": "Comprehensive full port scan with service detection",
+        "description": "Scan top 1000 ports with service detection",
         "flags": [
-            "-p-",
-            "-sV",
-            "-T3",
+            "-T4",                   
+            "--top-ports", "1000",
+            "-sV",                    
+            "--version-intensity", "5", 
+        ],
+    },
+    "comprehensive": {
+        "description": "Deep scan - all ports with detailed service detection (SLOW)",
+        "flags": [
+            "-p-",                
+            "-sV",                   
+            "-T3",                    
+            "--version-intensity", "7", 
         ],
     },
     "stealth": {
@@ -28,6 +39,7 @@ SCAN_PROFILES: Dict[str, Dict[str, List[str]]] = {
             "-sS",
             "-Pn",
             "-T2",
+            "--top-ports", "100",
         ],
     },
 }

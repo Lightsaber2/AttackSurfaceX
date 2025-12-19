@@ -47,7 +47,7 @@ Examples:
         "-p", "--profile",
         type=str,
         default=config.get("scan.default_profile", "fast"),
-        choices=["fast", "full", "stealth"],
+        choices=["fast", "full", "comprehensive", "stealth"],
         help="Scan profile to use (default: fast)"
     )
     
