@@ -5,6 +5,7 @@ scan:
   default_target: "scanme.nmap.org"
   default_profile: "fast"
   timeout: 1800  # seconds
+  rate_limit: null  # packets per second (null = no limit, 100 = conservative, 1000 = aggressive)
   
 # Directory paths
 paths:
@@ -30,5 +31,10 @@ risk:
 # Report generation
 reports:
   generate_json: true
-  generate_pdf: false  # Will be implemented later
+  generate_pdf: true  
   include_raw_xml: false
+
+# User interface
+ui:
+  show_progress: true  # Show progress bar during scans
+  colorized_output: true  # Use colors in terminal output
